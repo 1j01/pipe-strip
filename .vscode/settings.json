@@ -1,0 +1,36 @@
+{
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "python.analysis.packageIndexDepths": [
+        // The default depth is 1 (top-level only),
+        // which doesn't let auto-imports work for Textual,
+        // i.e. the Quick Fix for missing names, and
+        // maybe an auto-complete feature that I don't use.
+        // (2 might be sufficient.)
+        // https://github.com/Textualize/textual/issues/2104
+        {"name": "textual", "depth": 5},
+        {"name": "rich", "depth": 5},
+    ],
+    "css.validate": false,
+    "workbench.colorTheme": "Default Light Modern",
+    "workbench.colorCustomizations": {
+        "[Default Light Modern]": {
+            "editor.background": "#faa6ad",
+            "editor.foreground": "#000000",
+            "editor.lineHighlightBackground": "#FFD3D8",
+            "editor.selectionBackground": "#faa817",
+            "editorCursor.foreground": "#923dfd",
+            "statusBar.background": "#3c6602",
+            "statusBar.foreground": "#000000",
+            "sideBar.background": "#FAA6AC",
+            "sideBar.foreground": "#000000",
+            "sideBarSectionHeader.background": "#fce9bb",
+            "sideBarSectionHeader.foreground": "#000000",
+            "sideBarTitle.foreground": "#000000",
+            "list.activeSelectionBackground": "#7bffff",
+            "list.activeSelectionForeground": "#000000",
+            "activityBar.background": "#90a8fe",
+            "tab.activeBackground": "#a94300",
+        }
+    }
+}
