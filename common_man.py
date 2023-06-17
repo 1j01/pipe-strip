@@ -36,7 +36,10 @@ def create_histogram(options, file_paths, top_n=10):
     x = [option[0] for option in most_common]
     y = [option[1] for option in most_common]
     
-    hover_text = [f"Option: {option}<br>Frequency: {count}<br>Files:<br>{'<br>'.join(file_paths[i] for i, opt in enumerate(options) if opt == option)}" for option, count in most_common]
+    hover_text = []
+    for option, count in most_common:
+        file_paths_summary = get_file_paths_summary(file_paths, option)
+        hover_text.append(f"Option: {option}<br>Frequency: {count}<br>Files: {file_paths_summary}")
     
     fig = go.Figure(data=[go.Bar(x=x, y=y, hovertext=hover_text)])
     
@@ -49,6 +52,14 @@ def create_histogram(options, file_paths, top_n=10):
     )
     
     fig.show()
+
+def get_file_paths_summary(file_paths, option, max_files=5):
+    unique_file_paths = set(file_paths[i] for i, opt in enumerate(options) if opt == option)
+    file_paths_summary = list(unique_file_paths)[:max_files]
+    remaining_files = len(unique_file_paths) - max_files
+    if remaining_files > 0:
+        file_paths_summary.append(f"and {remaining_files} more...")
+    return "<br>".join(file_paths_summary)
 
 # Specify the manpages directory
 manpages_dir = '/usr/share/man'  # Modify this as per your system's manpages directory
