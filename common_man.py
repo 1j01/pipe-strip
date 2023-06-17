@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 
 def search_manpages(manpages_dir):
     options = []
+    file_paths = []
     for root, _, files in os.walk(manpages_dir):
         for file in files:
             if file.endswith('.gz'):
@@ -16,21 +17,22 @@ def search_manpages(manpages_dir):
                         manpage_text = manpage_file.read()
                         program_options = re.findall(r'^(?:\s*)(?<!\\)-{1,2}[\w-]+(?<!-)', manpage_text, re.MULTILINE)
                         options.extend(program_options)
+                        file_paths.extend([manpage_path] * len(program_options))
                         print(f"Found {len(program_options)} options in {manpage_path}: {program_options!r}")
                 except IOError:
                     print(f"Error: Failed to read manpage at {manpage_path}")
                 except UnicodeDecodeError:
                     print(f"Error: Failed to decode manpage at {manpage_path}")
-    return options
+    return options, file_paths
 
-def create_histogram(options, top_n=10):
+def create_histogram(options, file_paths, top_n=10):
     option_counts = Counter(options)
     most_common = option_counts.most_common(top_n)
     
     x = [option[0] for option in most_common]
     y = [option[1] for option in most_common]
     
-    hover_text = [f"Option: {option}<br>Frequency: {count}" for option, count in most_common]
+    hover_text = [f"Option: {option}<br>Frequency: {count}<br>Files:<br>{'<br>'.join(file_paths[i] for i, opt in enumerate(options) if opt == option)}" for option, count in most_common]
     
     fig = go.Figure(data=[go.Bar(x=x, y=y, hovertext=hover_text)])
     
@@ -47,8 +49,8 @@ def create_histogram(options, top_n=10):
 # Specify the manpages directory
 manpages_dir = '/usr/share/man'  # Modify this as per your system's manpages directory
 
-# Search manpages for options
-options = search_manpages(manpages_dir)
+# Search manpages for options and file paths
+options, file_paths = search_manpages(manpages_dir)
 
-# Create histogram of the most common options
-create_histogram(options, top_n=10)
+# Create histogram of the most common options with file paths
+create_histogram(options, file_paths, top_n=10)
