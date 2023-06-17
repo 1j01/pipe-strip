@@ -4,6 +4,15 @@ import re
 from collections import Counter
 import matplotlib.pyplot as plt
 
+def get_all_installed_programs():
+    try:
+        dpkg_output = subprocess.check_output(["dpkg", "--list"]).decode()
+        installed_programs = re.findall(r'ii\s+([\w+-]+)', dpkg_output)
+        return installed_programs
+    except subprocess.CalledProcessError:
+        print("Error: Failed to retrieve the list of installed programs.")
+        return []
+
 def search_manpages(programs):
     options = []
     for program in programs:
@@ -12,7 +21,7 @@ def search_manpages(programs):
             program_options = re.findall(r'(?<!\\)-{1,2}[\w-]+', manpage)
             options.extend(program_options)
         except subprocess.CalledProcessError:
-            print(f"Error: Could not find manpage for {program}")
+            pass  # Ignore programs without manpages
     return options
 
 def create_histogram(options, top_n=10):
@@ -29,7 +38,11 @@ def create_histogram(options, top_n=10):
     plt.xticks(rotation=45)
     plt.show()
 
-# Example usage
-programs = ['ls', 'grep', 'cat', 'cp', 'mv']  # Add more programs as needed
-options = search_manpages(programs)
+# Get the list of installed programs
+installed_programs = get_all_installed_programs()
+
+# Search manpages for options
+options = search_manpages(installed_programs)
+
+# Create histogram of the most common options
 create_histogram(options, top_n=10)
