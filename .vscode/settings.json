@@ -14,6 +14,23 @@
     "css.validate": false,
     "workbench.colorTheme": "Default Light Modern",
     "workbench.colorCustomizations": {
+        // palette: {
+        //     "wallpaper": "#faa6ad",
+        //     "carpet": "#3c6602",
+        //     "cat": "#faa817",
+        //     "cat_mouth": "#fdff7a",
+        //     "cat_nose": "#ffc2d6",
+        //     "pipe": "#923dfd",
+        //     "skin": "#fce9bb",
+        //     "hair": "#a94300",
+        //     "shoe": "#a94300",
+        //     "shirt": "#7bffff",
+        //     "chair": "#90a8fe",
+        //     "chair_shadow": "#5c8aed",
+        //     "table": "#b19187",
+        //     "table_shadow": "#9c5f56",
+        //     "paper": "#fdfffd",
+        // }
         "[Default Light Modern]": {
             "editor.background": "#faa6ad",
             "editor.foreground": "#000000",
@@ -31,6 +48,20 @@
             "list.activeSelectionForeground": "#000000",
             "activityBar.background": "#90a8fe",
             "tab.activeBackground": "#a94300",
+            "terminal.background": "#3c6602",
+            "terminal.foreground": "#ffffff",
+            "terminal.ansiMagenta": "#923dfd",
+            "terminal.ansiBrightMagenta": "#923dfd",
+            "terminal.ansiBrightBlack": "#000000",
+            "terminal.ansiBrightBlue": "#90a8fe",
+            "terminal.ansiBlue": "#5c8aed",
+            "terminal.ansiBrightCyan": "#7bffff",
+            "terminal.ansiBrightYellow": "#fdff7a",
+            "terminal.ansiYellow": "#faa817",
+            "terminal.ansiRed": "#FAA6AC",
+            "terminal.ansiBrightRed": "#ffc2d6",
+            "terminal.ansiBrightWhite": "#ffffff",
+
         }
     }
 }
