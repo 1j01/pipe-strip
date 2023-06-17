@@ -18,9 +18,16 @@
 	],
 	"words": [
 		"getpid",
+		"hovermode",
+		"hovertext",
+		"manpages",
 		"Odhner",
+		"plotly",
 		"psutil",
 		"pycache",
-		"vcard"
+		"tickangle",
+		"vcard",
+		"xaxis",
+		"yaxis"
 	]
 }

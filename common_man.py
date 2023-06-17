@@ -15,6 +15,7 @@ def search_manpages(manpages_dir):
                 try:
                     with gzip.open(manpage_path, 'rt', encoding='utf-8', errors='replace') as manpage_file:
                         manpage_text = manpage_file.read()
+                        assert isinstance(manpage_text, str)
                         program_options = re.findall(r'^(?:\s*)(?<!\\)-{1,2}[\w-]+(?<!-)', manpage_text, re.MULTILINE)
                         options.extend(program_options)
                         file_paths.extend([manpage_path] * len(program_options))
