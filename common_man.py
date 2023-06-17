@@ -3,7 +3,7 @@ import os
 import re
 import gzip
 from collections import Counter
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 
 def search_manpages(manpages_dir):
     options = []
@@ -30,12 +30,19 @@ def create_histogram(options, top_n=10):
     x = [option[0] for option in most_common]
     y = [option[1] for option in most_common]
     
-    plt.bar(x, y)
-    plt.xlabel('Options')
-    plt.ylabel('Frequency')
-    plt.title(f'Top {top_n} Most Common Options')
-    plt.xticks(rotation=45)
-    plt.show()
+    hover_text = [f"Option: {option}<br>Frequency: {count}" for option, count in most_common]
+    
+    fig = go.Figure(data=[go.Bar(x=x, y=y, hovertext=hover_text)])
+    
+    fig.update_layout(
+        title=f"Top {top_n} Most Common Options",
+        xaxis_title="Options",
+        yaxis_title="Frequency",
+        xaxis=dict(tickangle=45),
+        hovermode="x"
+    )
+    
+    fig.show()
 
 # Specify the manpages directory
 manpages_dir = '/usr/share/man'  # Modify this as per your system's manpages directory
