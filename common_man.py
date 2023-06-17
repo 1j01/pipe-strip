@@ -14,7 +14,7 @@ def search_manpages(manpages_dir):
                 try:
                     with gzip.open(manpage_path, 'rt', encoding='utf-8', errors='replace') as manpage_file:
                         manpage_text = manpage_file.read()
-                        program_options = re.findall(r'(?<!\\)-{1,2}[\w-]+', manpage_text)
+                        program_options = re.findall(r'^(?:\s*)(?<!\\)-{1,2}[\w-]+(?<!-)', manpage_text, re.MULTILINE)
                         options.extend(program_options)
                         print(f"Found {len(program_options)} options in {manpage_path}: {program_options!r}")
                 except IOError:
