@@ -26,6 +26,9 @@ colors = {
     "table": "#b19187",
     "table_shadow": "#9c5f56",
     "paper": "#fdfffd",
+    "sequel_wallpaper": "#84feb3",
+    "sequel_carpet": "#1492fc",
+    "sequel_smoke": "#dde6e4",
 }
 
 class PipeStrip(Widget):
