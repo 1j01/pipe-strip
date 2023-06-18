@@ -38,6 +38,8 @@ colors: dict[str, Color] = {
 with open("resources/pipe_strip_v12.ans", "r") as f:
     image_text_lines = [Text.from_ansi(line) for line in f.readlines()]
 
+image_width = image_text_lines[0].__rich_measure__(None, None).maximum  # type: ignore
+
 class PipeStrip(Widget):
 
     time = reactive(0.0)
@@ -62,7 +64,7 @@ class PipeStrip(Widget):
             # segments = image_text_lines[y].render(self.app.console, "")
 
             # marquee effect
-            x = int(self.time)
+            x = int(self.time) % image_width
             # segments = segments[x:] + segments[:x]
             before, after = image_text_lines[y].divide([x])
             segments = [*after.render(self.app.console, ""), *before.render(self.app.console, "")]
