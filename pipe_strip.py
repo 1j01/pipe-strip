@@ -36,6 +36,8 @@ colors: dict[str, Color] = {
     "pipe": Color.parse("#923dfd"),
 }
 
+colors_css = "\n".join([f"${name}: {color.css};" for name, color in colors.items()])
+
 with open("resources/pipe_strip_v12.ans", "r") as f:
     image_text_lines = [Text.from_ansi(line) for line in f.readlines()]
 
@@ -83,9 +85,10 @@ class PipeStripApp(App):
     #     terminal_width = event.size.width
     #     terminal_height = event.size.height
 
-    DEFAULT_CSS = """
+    DEFAULT_CSS = colors_css + """
     Screen {
         align: center middle;
+        background: $wallpaper !important;
     }
     PipeStrip {
         width: auto;
