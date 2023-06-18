@@ -10,25 +10,25 @@ from textual.widget import Widget
 
 from auto_restart import restart_on_changes
 
-colors = {
+colors: dict[str, Color] = {
     "wallpaper": Color.parse("#faa6ad"),
-    "carpet": "#3c6602",
-    "cat": "#faa817",
-    "cat_mouth": "#fdff7a",
-    "cat_nose": "#ffc2d6",
-    "pipe": "#923dfd",
-    "skin": "#fce9bb",
-    "hair": "#a94300",
-    "shoe": "#a94300",
-    "shirt": "#7bffff",
-    "chair": "#90a8fe",
-    "chair_shadow": "#5c8aed",
-    "table": "#b19187",
-    "table_shadow": "#9c5f56",
-    "paper": "#fdfffd",
-    "sequel_wallpaper": "#84feb3",
-    "sequel_carpet": "#1492fc",
-    "sequel_smoke": "#dde6e4",
+    "carpet": Color.parse("#3c6602"),
+    "cat": Color.parse("#faa817"),
+    "cat_mouth": Color.parse("#fdff7a"),
+    "cat_nose": Color.parse("#ffc2d6"),
+    "pipe": Color.parse("#923dfd"),
+    "skin": Color.parse("#fce9bb"),
+    "hair": Color.parse("#a94300"),
+    "shoe": Color.parse("#a94300"),
+    "shirt": Color.parse("#7bffff"),
+    "chair": Color.parse("#90a8fe"),
+    "chair_shadow": Color.parse("#5c8aed"),
+    "table": Color.parse("#b19187"),
+    "table_shadow": Color.parse("#9c5f56"),
+    "paper": Color.parse("#fdfffd"),
+    "sequel_wallpaper": Color.parse("#84feb3"),
+    "sequel_carpet": Color.parse("#1492fc"),
+    "sequel_smoke": Color.parse("#dde6e4"),
 }
 
 class PipeStrip(Widget):
