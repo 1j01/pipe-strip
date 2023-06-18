@@ -15,12 +15,12 @@
     "workbench.colorTheme": "Default Light Modern",
     "workbench.colorCustomizations": {
         // palette: {
+        //     "pen": "#000000",
         //     "wallpaper": "#faa6ad",
         //     "carpet": "#3c6602",
         //     "cat": "#faa817",
         //     "cat_mouth": "#fdff7a",
         //     "cat_nose": "#ffc2d6",
-        //     "pipe": "#923dfd",
         //     "skin": "#fce9bb",
         //     "hair": "#a94300",
         //     "shoe": "#a94300",
@@ -33,6 +33,7 @@
         //     "sequel_wallpaper": "#84feb3",
         //     "sequel_carpet": "#1492fc",
         //     "sequel_smoke": "#dde6e4",
+        //     "pipe": "#923dfd",
         // }
         "[Default Light Modern]": {
             "editor.background": "#faa6ad",

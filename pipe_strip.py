@@ -11,12 +11,12 @@ from textual.widget import Widget
 from auto_restart import restart_on_changes
 
 colors: dict[str, Color] = {
+    "pen": Color.parse("#000000"),
     "wallpaper": Color.parse("#faa6ad"),
     "carpet": Color.parse("#3c6602"),
     "cat": Color.parse("#faa817"),
     "cat_mouth": Color.parse("#fdff7a"),
     "cat_nose": Color.parse("#ffc2d6"),
-    "pipe": Color.parse("#923dfd"),
     "skin": Color.parse("#fce9bb"),
     "hair": Color.parse("#a94300"),
     "shoe": Color.parse("#a94300"),
@@ -29,6 +29,7 @@ colors: dict[str, Color] = {
     "sequel_wallpaper": Color.parse("#84feb3"),
     "sequel_carpet": Color.parse("#1492fc"),
     "sequel_smoke": Color.parse("#dde6e4"),
+    "pipe": Color.parse("#923dfd"),
 }
 
 class PipeStrip(Widget):
@@ -36,7 +37,8 @@ class PipeStrip(Widget):
     def render_line(self, y: int) -> Strip:
         """Render a line of the widget."""
         bg_color = colors["wallpaper"]
-        bg_style = Style(bgcolor=bg_color.rich_color, color="black")
+        fg_color = colors["pen"]
+        bg_style = Style(bgcolor=bg_color.rich_color, color=fg_color.rich_color)
         segments = []
         x = int(y * 10 - 15)
         segments.append(Segment("░" * x, bg_style, None))
