@@ -104,6 +104,7 @@ class SmokeTest(Widget):
     else:
         smoke_style = Style(bgcolor=colors["paper"].rich_color)
         bg_style = Style(bgcolor=colors["wallpaper"].rich_color)
+    outline_style = Style(bgcolor=colors["pen"].rich_color)
 
     def on_mount(self) -> None:
         """Called when the widget is added to a layout."""
@@ -119,7 +120,9 @@ class SmokeTest(Widget):
         left = x - width
         right = x + width
         segments.append(Segment(" " * left, self.bg_style, None))
-        segments.append(Segment(" " * (right - left), self.smoke_style, None))
+        segments.append(Segment(" ", self.outline_style, None))
+        segments.append(Segment(" " * (right - left - 2), self.smoke_style, None))
+        segments.append(Segment(" ", self.outline_style, None))
         segments.append(Segment(" " * (self.size.width - right), self.bg_style, None))
         return Strip(segments)
 
