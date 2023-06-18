@@ -41,6 +41,9 @@ colors_css = "\n".join([f"${name}: {color.css};" for name, color in colors.items
 with open("resources/pipe_strip_v12.ans", "r") as f:
     image_text_lines = [Text.from_ansi(line) for line in f.readlines()]
 
+border = Text.from_markup("▌▐", style=Style(bgcolor=colors["paper"].rich_color, color=colors["pen"].rich_color))
+image_text_lines = [line + border for line in image_text_lines]
+
 image_width = image_text_lines[0].__rich_measure__(None, None).maximum  # type: ignore
 image_height = len(image_text_lines)
 
