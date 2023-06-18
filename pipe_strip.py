@@ -3,6 +3,7 @@
 import math
 from rich.segment import Segment
 from rich.style import Style
+from rich.text import Text
 from textual import events
 from textual.app import App, ComposeResult
 from textual.color import Color
@@ -34,6 +35,9 @@ colors: dict[str, Color] = {
     "pipe": Color.parse("#923dfd"),
 }
 
+with open("resources/pipe_strip_v12.ans", "r") as f:
+    image_text_lines = [Text.from_ansi(line) for line in f.readlines()]
+
 class PipeStrip(Widget):
 
     time = reactive(0.0)
@@ -46,13 +50,25 @@ class PipeStrip(Widget):
 
     def render_line(self, y: int) -> Strip:
         """Render a line of the widget."""
-        bg_color = colors["wallpaper"]
-        fg_color = colors["pen"]
-        bg_style = Style(bgcolor=bg_color.rich_color, color=fg_color.rich_color)
-        segments = []
-        x = int(y * 10 * math.sin(self.time) - 15)
-        segments.append(Segment("░" * x, bg_style, None))
-        segments.append(Segment(" " * (self.size.width - x), bg_style, None))
+        # bg_color = colors["wallpaper"]
+        # fg_color = colors["pen"]
+        # bg_style = Style(bgcolor=bg_color.rich_color, color=fg_color.rich_color)
+        # segments = []
+        # x = int(y * 10 * math.sin(self.time) - 15)
+        # segments.append(Segment("░" * x, bg_style, None))
+        # segments.append(Segment(" " * (self.size.width - x), bg_style, None))
+        # segments = image.render(self.app.console, "")
+        if y < len(image_text_lines):
+            # segments = image_text_lines[y].render(self.app.console, "")
+
+            # marquee effect
+            x = int(self.time)
+            # segments = segments[x:] + segments[:x]
+            before, after = image_text_lines[y].divide([x])
+            segments = [*after.render(self.app.console, ""), *before.render(self.app.console, "")]
+        else:
+            segments = []
+
         return Strip(segments)
 
 class PipeStripApp(App):
