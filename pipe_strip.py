@@ -7,6 +7,7 @@ from rich.text import Text
 from textual import events
 from textual.app import App, ComposeResult
 from textual.color import Color
+from textual.geometry import Size
 from textual.reactive import reactive
 from textual.strip import Strip
 from textual.widget import Widget
@@ -39,6 +40,7 @@ with open("resources/pipe_strip_v12.ans", "r") as f:
     image_text_lines = [Text.from_ansi(line) for line in f.readlines()]
 
 image_width = image_text_lines[0].__rich_measure__(None, None).maximum  # type: ignore
+image_height = len(image_text_lines)
 
 class PipeStrip(Widget):
 
@@ -59,23 +61,37 @@ class PipeStrip(Widget):
         # x = int(y * 10 * math.sin(self.time) - 15)
         # segments.append(Segment("░" * x, bg_style, None))
         # segments.append(Segment(" " * (self.size.width - x), bg_style, None))
-        # segments = image.render(self.app.console, "")
         if y < len(image_text_lines):
-            # segments = image_text_lines[y].render(self.app.console, "")
-
             # marquee effect
             x = int(self.time) % image_width
-            # segments = segments[x:] + segments[:x]
             before, after = image_text_lines[y].divide([x])
             segments = [*after.render(self.app.console, ""), *before.render(self.app.console, "")]
         else:
             segments = []
 
         return Strip(segments)
+    
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        return image_width
+    
+    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        return image_height
 
 class PipeStripApp(App):
-    def on_resize(self, event: events.Resize) -> None:
-        global tank_width, tank_height
+    # def on_resize(self, event: events.Resize) -> None:
+    #     global terminal_width, terminal_height
+    #     terminal_width = event.size.width
+    #     terminal_height = event.size.height
+
+    DEFAULT_CSS = """
+    Screen {
+        align: center middle;
+    }
+    PipeStrip {
+        width: auto;
+        height: auto;
+    }
+    """
 
     def compose(self) -> ComposeResult:
         yield PipeStrip()
