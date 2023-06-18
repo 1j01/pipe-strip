@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
+import math
 from rich.segment import Segment
 from rich.style import Style
 from textual import events
 from textual.app import App, ComposeResult
 from textual.color import Color
+from textual.reactive import reactive
 from textual.strip import Strip
 from textual.widget import Widget
 
@@ -34,13 +36,21 @@ colors: dict[str, Color] = {
 
 class PipeStrip(Widget):
 
+    time = reactive(0.0)
+
+    def on_mount(self) -> None:
+        """Called when the widget is added to a layout."""
+        def advance_time() -> None:
+            self.time += 0.1
+        self.set_interval(0.1, advance_time)
+
     def render_line(self, y: int) -> Strip:
         """Render a line of the widget."""
         bg_color = colors["wallpaper"]
         fg_color = colors["pen"]
         bg_style = Style(bgcolor=bg_color.rich_color, color=fg_color.rich_color)
         segments = []
-        x = int(y * 10 - 15)
+        x = int(y * 10 * math.sin(self.time) - 15)
         segments.append(Segment("░" * x, bg_style, None))
         segments.append(Segment(" " * (self.size.width - x), bg_style, None))
         return Strip(segments)
