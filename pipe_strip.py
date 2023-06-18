@@ -116,13 +116,15 @@ class SmokeTest(Widget):
         """Render a line of the widget."""
         segments = []
         x = int(self.size.width * 0.2 * math.sin(self.time + y / 5) + self.size.width * 0.5)
+        x_above = int(self.size.width * 0.2 * math.sin(self.time + (y - 1) / 5) + self.size.width * 0.5)
         width = int(self.size.width * 0.2)
         left = x - width
         right = x + width
+        outline_length = int(math.fabs(x - x_above) + 1)
         segments.append(Segment(" " * left, self.bg_style, None))
-        segments.append(Segment(" ", self.outline_style, None))
-        segments.append(Segment(" " * (right - left - 2), self.smoke_style, None))
-        segments.append(Segment(" ", self.outline_style, None))
+        segments.append(Segment(" " * outline_length, self.outline_style, None))
+        segments.append(Segment(" " * (right - left - outline_length * 2), self.smoke_style, None))
+        segments.append(Segment(" " * outline_length, self.outline_style, None))
         segments.append(Segment(" " * (self.size.width - right), self.bg_style, None))
         return Strip(segments)
 
