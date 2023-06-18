@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import math
 from rich.segment import Segment
 from rich.style import Style
@@ -13,6 +14,12 @@ from textual.strip import Strip
 from textual.widget import Widget
 
 from auto_restart import restart_on_changes
+
+parser = argparse.ArgumentParser() #prog="pipe-strip")
+
+parser.add_argument("--cyclic", action="store_true", help="allows for infinite viewing")
+
+args = parser.parse_args()
 
 colors: dict[str, Color] = {
     "pen": Color.parse("#000000"),
@@ -41,8 +48,9 @@ colors_css = "\n".join([f"${name}: {color.css};" for name, color in colors.items
 with open("resources/pipe_strip_v12.ans", "r") as f:
     image_text_lines = [Text.from_ansi(line) for line in f.readlines()]
 
-border = Text.from_markup("▌▐", style=Style(bgcolor=colors["paper"].rich_color, color=colors["pen"].rich_color))
-image_text_lines = [line + border for line in image_text_lines]
+if args.cyclic:
+    border = Text.from_markup("▌▐", style=Style(bgcolor=colors["paper"].rich_color, color=colors["pen"].rich_color))
+    image_text_lines = [line + border for line in image_text_lines]
 
 image_width = image_text_lines[0].__rich_measure__(None, None).maximum  # type: ignore
 image_height = len(image_text_lines)
@@ -53,6 +61,8 @@ class PipeStrip(Widget):
 
     def on_mount(self) -> None:
         """Called when the widget is added to a layout."""
+        if not args.cyclic:
+            return
         def advance_time() -> None:
             self.time += 0.1
         self.set_interval(0.1, advance_time)
@@ -75,12 +85,13 @@ class PipeStrip(Widget):
             segments = []
 
         return Strip(segments)
-    
+
     def get_content_width(self, container: Size, viewport: Size) -> int:
         return image_width
-    
+
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         return image_height
+
 
 class PipeStripApp(App):
     # def on_resize(self, event: events.Resize) -> None:
@@ -104,9 +115,12 @@ class PipeStripApp(App):
 
 app = PipeStripApp()
 
-# Must be before app.run() which blocks until the app exits.
+# Must be called before app.run() which blocks until the app exits.
 # Takes the app in order to do some clean up of the app before restarting.
 restart_on_changes(app)
 
-if __name__ == "__main__":
+def main():
     app.run()
+
+if __name__ == "__main__":
+    main()
