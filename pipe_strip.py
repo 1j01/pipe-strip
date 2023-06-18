@@ -18,6 +18,8 @@ from auto_restart import restart_on_changes
 parser = argparse.ArgumentParser() #prog="pipe-strip")
 
 parser.add_argument("--cyclic", action="store_true", help="allows for infinite viewing")
+parser.add_argument("--smoke-test", action="store_true", help="this is not a pipe")
+parser.add_argument("--sql", action="store_true", help="Part II")
 
 args = parser.parse_args()
 
@@ -92,6 +94,35 @@ class PipeStrip(Widget):
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         return image_height
 
+class SmokeTest(Widget):
+
+    time = reactive(0.0)
+
+    if args.sql:
+        smoke_style = Style(bgcolor=colors["sequel_smoke"].rich_color)
+        bg_style = Style(bgcolor=colors["sequel_wallpaper"].rich_color)
+    else:
+        smoke_style = Style(bgcolor=colors["paper"].rich_color)
+        bg_style = Style(bgcolor=colors["wallpaper"].rich_color)
+
+    def on_mount(self) -> None:
+        """Called when the widget is added to a layout."""
+        def advance_time() -> None:
+            self.time += 0.1
+        self.set_interval(0.1, advance_time)
+
+    def render_line(self, y: int) -> Strip:
+        """Render a line of the widget."""
+        segments = []
+        x = int(self.size.width * 0.2 * math.sin(self.time + y / 5) + self.size.width * 0.5)
+        width = int(self.size.width * 0.2)
+        left = x - width
+        right = x + width
+        segments.append(Segment(" " * left, self.bg_style, None))
+        segments.append(Segment(" " * (right - left), self.smoke_style, None))
+        segments.append(Segment(" " * (self.size.width - right), self.bg_style, None))
+        return Strip(segments)
+
 
 class PipeStripApp(App):
     # def on_resize(self, event: events.Resize) -> None:
@@ -108,10 +139,17 @@ class PipeStripApp(App):
         width: auto;
         height: auto;
     }
+    SmokeTest {
+        width: 100%;
+        height: 100%;
+    }
     """
 
     def compose(self) -> ComposeResult:
-        yield PipeStrip()
+        if args.smoke_test:
+            yield SmokeTest()
+        else:
+            yield PipeStrip()
 
 app = PipeStripApp()
 
