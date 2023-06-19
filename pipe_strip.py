@@ -47,7 +47,10 @@ colors: dict[str, Color] = {
 
 colors_css = "\n".join([f"${name}: {color.css};" for name, color in colors.items()])
 
-with open("resources/pipe_strip_v12.ans", "r") as f:
+file_path = "resources/pipe_strip_v12.ans"
+if args.sql:
+    file_path = "resources/pipe_strip_sequel_v6.ans"
+with open(file_path, "r") as f:
     image_text_lines = [Text.from_ansi(line) for line in f.readlines()]
 
 if args.cyclic:
@@ -140,6 +143,9 @@ class PipeStripApp(App):
         align: center middle;
         background: $wallpaper !important;
     }
+    .sequel Screen {
+        background: $sequel_wallpaper !important;
+    }
     PipeStrip {
         width: auto;
         height: auto;
@@ -149,6 +155,10 @@ class PipeStripApp(App):
         height: 100%;
     }
     """
+
+    def on_mount(self) -> None:
+        if args.sql:
+            self.add_class("sequel")
 
     def compose(self) -> ComposeResult:
         if args.smoke_test:
