@@ -50,7 +50,7 @@ colors_css = "\n".join([f"${name}: {color.css};" for name, color in colors.items
 
 file_path = "resources/pipe_strip_v12.ans"
 if args.sql:
-    file_path = "resources/pipe_strip_sequel_v6.ans"
+    file_path = "resources/pipe_strip_sequel_v7.ans"
 with open(file_path, "r") as f:
     image_text_lines = [Text.from_ansi(line) for line in f.readlines()]
 
