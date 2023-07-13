@@ -18,7 +18,7 @@ from auto_restart import restart_on_changes
 
 parser = argparse.ArgumentParser() #prog="pipe-strip")
 
-parser.add_argument("--cyclic", action="store_true", help="allows for infinite viewing")
+parser.add_argument("--cyclic", action="count", help="allows for infinite viewing")
 parser.add_argument("--smoke-test", action="store_true", help="runs smoke test")
 # parser.add_argument("-2", "--sql", "--sequel", action="store_true", help="Part II")
 parser.add_argument("--sql", "--take-pipe", action="store_true", help="retrieves pipe and takes command")
@@ -120,6 +120,10 @@ class PipeStrip(Widget):
             file_path = file_paths[2]
 
         self.image_text_lines = self.load_image_lines(file_path)
+
+        for i in range(len(self.image_text_lines)):
+            for j in range(args.cyclic - 1):
+                self.image_text_lines[i] += self.image_text_lines[i]
 
         if args.cyclic:
             border = Text.from_markup("▌▐", style=Style(bgcolor=colors["paper"].rich_color, color=colors["pen"].rich_color))
