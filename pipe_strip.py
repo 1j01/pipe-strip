@@ -21,7 +21,6 @@ parser = argparse.ArgumentParser() #prog="pipe-strip")
 parser.add_argument("--cyclic", action="count", help="allows for infinite viewing; can be specified twice to repeat as needed in X")
 # parser.add_argument("--cyclic", action="count", help="allows for infinite viewing; can be specified 1-3 times to increase verbosity")
 parser.add_argument("--smoke-test", action="store_true", help="runs smoke test")
-# parser.add_argument("-2", "--sql", "--sequel", action="store_true", help="Part II")
 parser.add_argument("--sql", "--take-pipe", action="store_true", help="retrieves pipe and takes command, in sequel")
 
 args = parser.parse_args()
@@ -80,13 +79,6 @@ class PipeStrip(Widget):
 
     def render_line(self, y: int) -> Strip:
         """Render a line of the widget."""
-        # bg_color = colors["wallpaper"]
-        # fg_color = colors["pen"]
-        # bg_style = Style(bgcolor=bg_color.rich_color, color=fg_color.rich_color)
-        # segments = []
-        # x = int(y * 10 * math.sin(self.time) - 15)
-        # segments.append(Segment("░" * x, bg_style, None))
-        # segments.append(Segment(" " * (self.size.width - x), bg_style, None))
         if y < len(self.image_text_lines):
             # marquee effect
             x = int(self.time) % self.image_width
@@ -114,12 +106,15 @@ class PipeStrip(Widget):
 
         file_paths = sequel_file_paths if args.sql else original_file_paths
 
+        # Ignore width if --cyclic is passed twice, since
         file_path = file_paths[0]
         if (size.width < 80 and args.cyclic < 2) or size.height < 12:
             file_path = file_paths[1]
         if (size.width < 40 and args.cyclic < 2) or size.height < 6:
             file_path = file_paths[2]
 
+        # NOTE: Make sure not to mutate this object, since it's cached,
+        # and as such, the mutations would be persisted!
         self.image_text_lines = self.load_image_lines(file_path)
 
         if args.cyclic:
@@ -133,12 +128,14 @@ class PipeStrip(Widget):
             new_text_lines = []
             for original_line in self.image_text_lines:
                 line = original_line
+                # `image_width` must be calculated after the border is added, and before its used here
                 reps_needed = math.ceil(size.width / self.image_width)
                 for _ in range(reps_needed):
                     line += original_line
                 new_text_lines.append(line)
             self.image_text_lines = new_text_lines
 
+        # `image_width` needs to be re-calculated, so the widget can expand to the full width of the screen (if needed)
         self.image_width = self.image_text_lines[0].__rich_measure__(None, None).maximum  # type: ignore
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
@@ -148,6 +145,7 @@ class PipeStrip(Widget):
         return self.image_height
 
 class SmokeTest(Widget):
+    """A widget that renders a smoke effect."""
 
     time = reactive(0.0)
 
@@ -183,10 +181,7 @@ class SmokeTest(Widget):
 
 
 class PipeStripApp(App):
-    # def on_resize(self, event: events.Resize) -> None:
-    #     global terminal_width, terminal_height
-    #     terminal_width = event.size.width
-    #     terminal_height = event.size.height
+    """The Textual application."""
 
     DEFAULT_CSS = colors_css + """
     Screen {
@@ -207,6 +202,7 @@ class PipeStripApp(App):
     """
 
     def on_mount(self) -> None:
+        """Called when the app is mounted."""
         if args.sql:
             self.add_class("sequel")
 
@@ -216,6 +212,7 @@ class PipeStripApp(App):
             self.query_one(PipeStrip).update_image()
 
     def compose(self) -> ComposeResult:
+        """Compose the layout."""
         if args.smoke_test:
             yield SmokeTest()
         else:
