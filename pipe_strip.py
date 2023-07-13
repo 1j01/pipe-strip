@@ -121,9 +121,18 @@ class PipeStrip(Widget):
 
         self.image_text_lines = self.load_image_lines(file_path)
 
-        for i in range(len(self.image_text_lines)):
-            for j in range(args.cyclic - 1):
-                self.image_text_lines[i] += self.image_text_lines[i]
+        # for i in range(len(self.image_text_lines)):
+        #     line_text = self.image_text_lines[i]
+        #     for j in range(args.cyclic - 1):
+        #         self.image_text_lines[i] += line_text
+        # Don't modify the original lines, as they are cached
+        if args.cyclic > 1:
+            new_text_lines = []
+            for line in self.image_text_lines:
+                for _ in range(args.cyclic - 1):
+                    line += line
+                new_text_lines.append(line)
+            self.image_text_lines = new_text_lines
 
         if args.cyclic:
             border = Text.from_markup("▌▐", style=Style(bgcolor=colors["paper"].rich_color, color=colors["pen"].rich_color))
