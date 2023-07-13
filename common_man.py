@@ -66,7 +66,7 @@ def get_file_paths_summary(file_paths, option, max_files=5):
     return "<br>".join(file_paths_summary)
 
 # Specify the manpages directory
-manpages_dir = '/usr/share/man'  # Modify this as per your system's manpages directory
+manpages_dir = '/usr/share/man'
 
 # Search manpages for options and file paths
 options, file_paths = search_manpages(manpages_dir)
