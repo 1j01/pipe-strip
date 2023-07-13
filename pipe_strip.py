@@ -18,7 +18,7 @@ from auto_restart import restart_on_changes
 
 parser = argparse.ArgumentParser() #prog="pipe-strip")
 
-parser.add_argument("--cyclic", action="count", help="allows for infinite viewing; can be specified 1-3 times to increase verbosity")
+parser.add_argument("--cyclic", action="count", default=0, help="allows for infinite viewing; can be specified 1-3 times to increase verbosity")
 parser.add_argument("--smoke-test", action="store_true", help="runs smoke test")
 parser.add_argument("--sql", "--take-pipe", action="store_true", help="retrieves pipe and takes command, in sequel")
 
