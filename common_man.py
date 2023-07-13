@@ -6,6 +6,8 @@ from collections import Counter
 import plotly.graph_objects as go
 import glob
 
+re_option = re.compile(r'^(?:\s*)(?<!\\)-{1,2}[\w-]+(?<!-)', re.MULTILINE)
+
 def search_manpages(manpages_dir: str) -> tuple[list[str], list[str]]:
     """Search through manpages to find options used by various commands."""
     options = []
@@ -24,7 +26,7 @@ def search_manpages(manpages_dir: str) -> tuple[list[str], list[str]]:
                         with gzip.open(manpage_path, 'rt', encoding='utf-8', errors='replace') as manpage_file:
                             manpage_text = manpage_file.read()
                             assert isinstance(manpage_text, str)
-                            program_options = re.findall(r'^(?:\s*)(?<!\\)-{1,2}[\w-]+(?<!-)', manpage_text, re.MULTILINE)
+                            program_options = re_option.findall(manpage_text)
                             
                             # uniquify options so the histogram doesn't get skewed
                             program_options = list(set(program_options))
