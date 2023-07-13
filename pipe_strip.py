@@ -199,7 +199,8 @@ class PipeStripApp(App):
 
     def on_resize(self, event: events.Resize) -> None:
         """Called when the widget is resized."""
-        self.query_one(PipeStrip).update_image()
+        if not args.smoke_test:
+            self.query_one(PipeStrip).update_image()
 
     def compose(self) -> ComposeResult:
         if args.smoke_test:
