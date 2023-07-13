@@ -56,7 +56,7 @@ original_file_paths = [
 sequel_file_paths = [
     "resources/pipe_strip_sequel_v7.ans",
     "resources/pipe_strip_sequel_mini.ans",
-    "resources/pipe_strip_sequel_micro.ans",
+    "resources/pipe_strip_sequel_micro_v4.ans",
 ]
 
 class PipeStrip(Widget):
