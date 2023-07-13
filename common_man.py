@@ -11,6 +11,10 @@ def search_manpages(manpages_dir):
     file_paths = []
     pattern = os.path.join(manpages_dir, 'man*')
     for dirpath in glob.glob(pattern):
+        # skip man<n> pages other than man1
+        # man(1) contains user commands
+        if re.search(r'man\d', dirpath) and not re.search(r'man1', dirpath):
+            continue
         for root, _, filenames in os.walk(dirpath):
             for filename in filenames:
                 if filename.endswith('.gz'):
