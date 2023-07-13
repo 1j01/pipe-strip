@@ -72,4 +72,4 @@ manpages_dir = '/usr/share/man'  # Modify this as per your system's manpages dir
 options, file_paths = search_manpages(manpages_dir)
 
 # Create histogram of the most common options with file paths
-create_histogram(options, file_paths, top_n=10)
+create_histogram(options, file_paths, top_n=100)
