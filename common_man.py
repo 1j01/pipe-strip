@@ -6,7 +6,8 @@ from collections import Counter
 import plotly.graph_objects as go
 import glob
 
-def search_manpages(manpages_dir):
+def search_manpages(manpages_dir: str) -> tuple[list[str], list[str]]:
+    """Search through manpages to find options used by various commands."""
     options = []
     file_paths = []
     pattern = os.path.join(manpages_dir, 'man*')
@@ -33,7 +34,8 @@ def search_manpages(manpages_dir):
                         print(f"Error: Failed to decode manpage at {manpage_path}")
     return options, file_paths
 
-def create_histogram(options, file_paths, top_n=10):
+def create_histogram(options: list[str], file_paths: list[str], top_n: int) -> None:
+    """Create a histogram of the most common options, with hover text showing the file paths."""
     option_counts = Counter(options)
     most_common = option_counts.most_common(top_n)
     
@@ -57,7 +59,11 @@ def create_histogram(options, file_paths, top_n=10):
     
     fig.show()
 
-def get_file_paths_summary(file_paths, option, max_files=5):
+def get_file_paths_summary(file_paths: list[str], option: str, max_files: int = 5) -> str:
+    """Return a summary of the file paths containing the given option.
+    
+    Plotly fails to show ANY hover text if it's too big to fit, so we need to limit it.
+    """
     unique_file_paths = set(file_paths[i] for i, opt in enumerate(options) if opt == option)
     file_paths_summary = list(unique_file_paths)[:max_files]
     remaining_files = len(unique_file_paths) - max_files
