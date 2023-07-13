@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+from functools import cache
 import math
 from rich.segment import Segment
 from rich.style import Style
@@ -9,7 +10,7 @@ from textual import events
 from textual.app import App, ComposeResult
 from textual.color import Color
 from textual.geometry import Size
-from textual.reactive import reactive
+from textual.reactive import reactive, var
 from textual.strip import Strip
 from textual.widget import Widget
 
@@ -48,25 +49,28 @@ colors: dict[str, Color] = {
 
 colors_css = "\n".join([f"${name}: {color.css};" for name, color in colors.items()])
 
-file_path = "resources/pipe_strip_v12.ans"
-if args.sql:
-    file_path = "resources/pipe_strip_sequel_v7.ans"
-with open(file_path, "r") as f:
-    image_text_lines = [Text.from_ansi(line) for line in f.readlines()]
-
-if args.cyclic:
-    border = Text.from_markup("▌▐", style=Style(bgcolor=colors["paper"].rich_color, color=colors["pen"].rich_color))
-    image_text_lines = [line + border for line in image_text_lines]
-
-image_width = image_text_lines[0].__rich_measure__(None, None).maximum  # type: ignore
-image_height = len(image_text_lines)
+original_file_paths = [
+    "resources/pipe_strip_v12.ans",
+    "resources/pipe_strip_mini.ans",
+    "resources/pipe_strip_micro.ans",
+]
+sequel_file_paths = [
+    "resources/pipe_strip_sequel_v7.ans",
+    "resources/pipe_strip_sequel_mini.ans",
+    "resources/pipe_strip_sequel_micro.ans",
+]
 
 class PipeStrip(Widget):
 
     time = reactive(0.0)
 
+    image_text_lines = var[list[Text]]([])
+    image_width = reactive[int](0, layout=True)
+    image_height = reactive[int](0, layout=True)
+
     def on_mount(self) -> None:
         """Called when the widget is added to a layout."""
+        self.update_image()
         if not args.cyclic:
             return
         def advance_time() -> None:
@@ -82,21 +86,53 @@ class PipeStrip(Widget):
         # x = int(y * 10 * math.sin(self.time) - 15)
         # segments.append(Segment("░" * x, bg_style, None))
         # segments.append(Segment(" " * (self.size.width - x), bg_style, None))
-        if y < len(image_text_lines):
+        if y < len(self.image_text_lines):
             # marquee effect
-            x = int(self.time) % image_width
-            before, after = image_text_lines[y].divide([x])
+            x = int(self.time) % self.image_width
+            before, after = self.image_text_lines[y].divide([x])
             segments = [*after.render(self.app.console, ""), *before.render(self.app.console, "")]
         else:
             segments = []
 
         return Strip(segments)
 
+    @cache
+    def load_image_lines(self, file_path: str) -> list[Text]:
+        """Load the image from a file and split into lines of Text for rendering."""
+        with open(file_path, "r") as f:
+            return [Text.from_ansi(line) for line in f.readlines()]
+
+    def update_image(self) -> None:
+        """Load the appropriate image given the terminal size (and CLI arguments)."""
+        # print("update_image", self.size, self.parent.size, self.screen.size, self.app.size)
+        # self.size will not be set until later, based on this method's decision
+        # self.parent.size will fail to shrink (in the current layout)
+        # self.screen.size will not work in arbitrary layouts and is not updated yet
+        # self.app.size will not work in arbitrary layouts
+        size = self.app.size
+
+        file_paths = sequel_file_paths if args.sql else original_file_paths
+
+        file_path = file_paths[0]
+        if size.width < 80 or size.height < 12:
+            file_path = file_paths[1]
+        if size.width < 40 or size.height < 6:
+            file_path = file_paths[2]
+
+        self.image_text_lines = self.load_image_lines(file_path)
+
+        if args.cyclic:
+            border = Text.from_markup("▌▐", style=Style(bgcolor=colors["paper"].rich_color, color=colors["pen"].rich_color))
+            self.image_text_lines = [line + border for line in self.image_text_lines]
+
+        self.image_width = self.image_text_lines[0].__rich_measure__(None, None).maximum  # type: ignore
+        self.image_height = len(self.image_text_lines)
+
     def get_content_width(self, container: Size, viewport: Size) -> int:
-        return image_width
+        return self.image_width
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
-        return image_height
+        return self.image_height
 
 class SmokeTest(Widget):
 
@@ -160,6 +196,10 @@ class PipeStripApp(App):
     def on_mount(self) -> None:
         if args.sql:
             self.add_class("sequel")
+
+    def on_resize(self, event: events.Resize) -> None:
+        """Called when the widget is resized."""
+        self.query_one(PipeStrip).update_image()
 
     def compose(self) -> ComposeResult:
         if args.smoke_test:
