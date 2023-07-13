@@ -26,6 +26,7 @@
 		"psutil",
 		"pycache",
 		"tickangle",
+		"uniquify",
 		"vcard",
 		"xaxis",
 		"yaxis"

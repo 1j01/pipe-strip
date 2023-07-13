@@ -25,6 +25,10 @@ def search_manpages(manpages_dir: str) -> tuple[list[str], list[str]]:
                             manpage_text = manpage_file.read()
                             assert isinstance(manpage_text, str)
                             program_options = re.findall(r'^(?:\s*)(?<!\\)-{1,2}[\w-]+(?<!-)', manpage_text, re.MULTILINE)
+                            
+                            # uniquify options so the histogram doesn't get skewed
+                            program_options = list(set(program_options))
+
                             options.extend(program_options)
                             file_paths.extend([manpage_path] * len(program_options))
                             print(f"Found {len(program_options)} options in {manpage_path}: {program_options!r}")
