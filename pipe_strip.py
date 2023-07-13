@@ -121,25 +121,24 @@ class PipeStrip(Widget):
 
         self.image_text_lines = self.load_image_lines(file_path)
 
-        # for i in range(len(self.image_text_lines)):
-        #     line_text = self.image_text_lines[i]
-        #     for j in range(args.cyclic - 1):
-        #         self.image_text_lines[i] += line_text
-        # Don't modify the original lines, as they are cached
-        if args.cyclic > 1:
-            new_text_lines = []
-            for line in self.image_text_lines:
-                for _ in range(args.cyclic - 1):
-                    line += line
-                new_text_lines.append(line)
-            self.image_text_lines = new_text_lines
-
         if args.cyclic:
             border = Text.from_markup("▌▐", style=Style(bgcolor=colors["paper"].rich_color, color=colors["pen"].rich_color))
             self.image_text_lines = [line + border for line in self.image_text_lines]
 
         self.image_width = self.image_text_lines[0].__rich_measure__(None, None).maximum  # type: ignore
         self.image_height = len(self.image_text_lines)
+
+        if args.cyclic > 1:
+            new_text_lines = []
+            for original_line in self.image_text_lines:
+                line = original_line
+                reps_needed = math.ceil(size.width / self.image_width)
+                for _ in range(reps_needed):
+                    line += original_line
+                new_text_lines.append(line)
+            self.image_text_lines = new_text_lines
+
+        self.image_width = self.image_text_lines[0].__rich_measure__(None, None).maximum  # type: ignore
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         return self.image_width
