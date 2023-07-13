@@ -139,6 +139,8 @@ class PipeStrip(Widget):
             # repeat vertically to fill the screen
             reps_needed = math.ceil(size.height / self.image_height)
             self.image_text_lines *= reps_needed
+            # prevent scrollbar
+            self.image_text_lines = self.image_text_lines[:size.height]
 
         # These need to be re-calculated, so the widget can expand if needed
         self.image_width = self.image_text_lines[0].__rich_measure__(None, None).maximum  # type: ignore
