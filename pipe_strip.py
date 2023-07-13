@@ -18,8 +18,7 @@ from auto_restart import restart_on_changes
 
 parser = argparse.ArgumentParser() #prog="pipe-strip")
 
-parser.add_argument("--cyclic", action="count", help="allows for infinite viewing; can be specified twice to repeat as needed in X")
-# parser.add_argument("--cyclic", action="count", help="allows for infinite viewing; can be specified 1-3 times to increase verbosity")
+parser.add_argument("--cyclic", action="count", help="allows for infinite viewing; can be specified 1-3 times to increase verbosity")
 parser.add_argument("--smoke-test", action="store_true", help="runs smoke test")
 parser.add_argument("--sql", "--take-pipe", action="store_true", help="retrieves pipe and takes command, in sequel")
 
@@ -125,6 +124,7 @@ class PipeStrip(Widget):
         self.image_height = len(self.image_text_lines)
 
         if args.cyclic > 1:
+            # repeat horizontally to fill the screen
             new_text_lines = []
             for original_line in self.image_text_lines:
                 line = original_line
@@ -135,8 +135,14 @@ class PipeStrip(Widget):
                 new_text_lines.append(line)
             self.image_text_lines = new_text_lines
 
-        # `image_width` needs to be re-calculated, so the widget can expand to the full width of the screen (if needed)
+        if args.cyclic > 2:
+            # repeat vertically to fill the screen
+            reps_needed = math.ceil(size.height / self.image_height)
+            self.image_text_lines *= reps_needed
+
+        # These need to be re-calculated, so the widget can expand if needed
         self.image_width = self.image_text_lines[0].__rich_measure__(None, None).maximum  # type: ignore
+        self.image_height = len(self.image_text_lines)
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         return self.image_width
