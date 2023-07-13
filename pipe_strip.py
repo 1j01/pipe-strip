@@ -114,9 +114,9 @@ class PipeStrip(Widget):
         file_paths = sequel_file_paths if args.sql else original_file_paths
 
         file_path = file_paths[0]
-        if size.width < 80 or size.height < 12:
+        if (size.width < 80 and args.cyclic < 2) or size.height < 12:
             file_path = file_paths[1]
-        if size.width < 40 or size.height < 6:
+        if (size.width < 40 and args.cyclic < 2) or size.height < 6:
             file_path = file_paths[2]
 
         self.image_text_lines = self.load_image_lines(file_path)
