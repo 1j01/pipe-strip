@@ -6,7 +6,35 @@ from collections import Counter
 import plotly.graph_objects as go
 import glob
 
-re_option = re.compile(r'^(?:\s*)(?<!\\)-{1,2}[\w-]+(?<!-)', re.MULTILINE)
+# Original regex:
+# re_option = re.compile(r'^(?:\s*)(?<!\\)-{1,2}[\w-]+(?<!-)', re.MULTILINE)
+# Rewritten...
+# This fails because of overlapping match ranges, with the whitespace being consumed by the first match:
+# re_option = re.compile(r'(?<!-)(?:\s|^)((?:-|--)(?:[a-zA-Z0-9-](?<!--))+)(?:\s|$)')
+# Instead, we can use a lookahead to ensure that the whitespace is not consumed by the first match:
+# re_option = re.compile(r'(?<!-)((?:\s|^)(?:-|--)(?:[a-zA-Z0-9-](?<!--))+)(?=\s|$)')
+# and a lookbehind so we don't need to trim the whitespace from the match:
+# re_option = re.compile(r'(?<!-)((?:(?<=\s)|^)(?:-|--)(?:[a-zA-Z0-9-](?<!--))+)(?=\s|$)')
+# allowing some more characters to follow the option:
+re_option = re.compile(r'(?<!-)((?:(?<=\s|,)|^)(?:-|--)(?:[a-zA-Z0-9-](?<!--))+)(?=\s|$|\[|=|,)')
+
+def compare_lists(found: list[str], expected: list[str]) -> None:
+    assert found == expected, f"Lists don't match.\nExpected: {expected!r}\nFound: {found!r}\nMissing: {set(expected) - set(found)!r}\nExtraneous: {set(found) - set(expected)!r}"
+
+def test_re_option():
+    found = re_option.findall("-f --first -l --last")
+    expected = ['-f', '--first', '-l', '--last']
+    compare_lists(found, expected)
+
+    found = re_option.findall("- -- ------------------ horizontal ------------------rules------------------")
+    expected = []
+    compare_lists(found, expected)
+
+    found = re_option.findall("-a,--all  --author  --block-size=SIZE  --color[=WHEN]  --context[=NUM]  --help ----------  --show-ends")
+    expected = ['-a', '--all', '--author', '--block-size', '--color', '--context', '--help', '--show-ends']
+    compare_lists(found, expected)
+
+test_re_option()
 
 def search_manpages(manpages_dir: str) -> tuple[list[str], list[str]]:
     """Search through manpages to find options used by various commands."""
