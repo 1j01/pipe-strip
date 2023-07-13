@@ -50,7 +50,7 @@ colors_css = "\n".join([f"${name}: {color.css};" for name, color in colors.items
 
 original_file_paths = [
     "resources/pipe_strip_v12.ans",
-    "resources/pipe_strip_mini.ans",
+    "resources/pipe_strip_mini_v2.ans",
     "resources/pipe_strip_micro.ans",
 ]
 sequel_file_paths = [
