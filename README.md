@@ -1,9 +1,15 @@
 
 # Pipe Strip
 
-Install with `pip install -r requirements.txt`
+Install with `pipx install pipe-strip` (for an isolated environment) or `pip install pipe-strip`
 
-Run with `python pipe_strip.py`
+Run with `pipe-strip`
+
+![Pipe Strip](https://raw.githubusercontent.com/1j01/pipe-strip/v0.1.0/src/pipe_strip/resources/pipe_strip_v12.ans.svg)
+
+The ANSI art automatically scales to fit your terminal size.
+
+Cyclic mode (see `pipe-strip --help`) allows for infinite viewing of the Pipe Strip.
 
 ## License
 
