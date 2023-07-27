@@ -15,13 +15,12 @@ from textual.reactive import reactive, var
 from textual.strip import Strip
 from textual.widget import Widget
 
-from auto_restart import restart_on_changes
-
 parser = argparse.ArgumentParser() #prog="pipe-strip")
 
 parser.add_argument("--cyclic", action="count", default=0, help="allows for infinite viewing; can be specified 1-3 times to increase verbosity")
 parser.add_argument("--smoke-test", action="store_true", help="runs smoke test")
 parser.add_argument("--sql", "--take-pipe", action="store_true", help="retrieves pipe and takes command, in sequel")
+parser.add_argument("--dev", action="store_true", help="enables auto-restart on file changes")
 
 args = parser.parse_args()
 
@@ -233,7 +232,9 @@ app = PipeStripApp()
 
 # Must be called before app.run() which blocks until the app exits.
 # Takes the app in order to do some clean up of the app before restarting.
-restart_on_changes(app)
+if args.dev:
+    from auto_restart import restart_on_changes
+    restart_on_changes(app)
 
 def main():
     app.run()

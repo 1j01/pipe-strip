@@ -1,13 +1,13 @@
 """Automatically restarts the program when a file is changed."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 import os
 import sys
-import psutil
 
-from watchdog.events import PatternMatchingEventHandler, FileSystemEvent, EVENT_TYPE_CLOSED, EVENT_TYPE_OPENED
-from watchdog.observers import Observer
-
-_app = None
+if TYPE_CHECKING:
+    from .pipe_strip import PipeStripApp
 
 def restart_program():
     """Restarts the current program, after resetting terminal state, and cleaning up file objects and descriptors."""
@@ -37,6 +37,7 @@ def restart_program():
         print("Error stopping file change observer:", e)
 
     try:
+        import psutil
         p = psutil.Process(os.getpid())
         for handler in p.open_files() + p.connections():
             try:
@@ -48,17 +49,21 @@ def restart_program():
 
     os.execl(sys.executable, *sys.orig_argv)
 
-class RestartHandler(PatternMatchingEventHandler):
-    """A handler for file changes"""
-    def on_any_event(self, event: FileSystemEvent):
-        if event.event_type in (EVENT_TYPE_CLOSED, EVENT_TYPE_OPENED):
-            # These seem like they'd just cause trouble... they're not changes, are they?
-            return
-        print("Reloading due to FS change:", event.event_type, event.src_path)
-        restart_program()
-
-def restart_on_changes(app):
+def restart_on_changes(app: PipeStripApp):
     """Restarts the current program when a file is changed"""
+    
+    from watchdog.events import PatternMatchingEventHandler, FileSystemEvent, EVENT_TYPE_CLOSED, EVENT_TYPE_OPENED
+    from watchdog.observers import Observer
+
+    class RestartHandler(PatternMatchingEventHandler):
+        """A handler for file changes"""
+        def on_any_event(self, event: FileSystemEvent):
+            if event.event_type in (EVENT_TYPE_CLOSED, EVENT_TYPE_OPENED):
+                # These seem like they'd just cause trouble... they're not changes, are they?
+                return
+            print("Reloading due to FS change:", event.event_type, event.src_path)
+            restart_program()
+
     global observer, _app
     _app = app
     observer = Observer()
