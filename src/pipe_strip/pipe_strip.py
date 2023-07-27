@@ -3,6 +3,7 @@
 import argparse
 from functools import cache
 import math
+import os
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
@@ -58,6 +59,8 @@ sequel_file_paths = [
     "resources/pipe_strip_sequel_mini_v1.ans",
     "resources/pipe_strip_sequel_micro_v4.ans",
 ]
+original_file_paths = [os.path.join(os.path.dirname(__file__), path) for path in original_file_paths]
+sequel_file_paths = [os.path.join(os.path.dirname(__file__), path) for path in sequel_file_paths]
 
 class PipeStrip(Widget):
 
