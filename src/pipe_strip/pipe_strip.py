@@ -233,7 +233,7 @@ app = PipeStripApp()
 # Must be called before app.run() which blocks until the app exits.
 # Takes the app in order to do some clean up of the app before restarting.
 if args.dev:
-    from auto_restart import restart_on_changes
+    from .auto_restart import restart_on_changes
     restart_on_changes(app)
 
 def main():
