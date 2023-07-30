@@ -4,6 +4,7 @@ import argparse
 from functools import cache
 import math
 import os
+from rich.cells import cell_len
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
@@ -122,7 +123,7 @@ class PipeStrip(Widget):
             border = Text.from_markup("▌▐", style=Style(bgcolor=colors["paper"].rich_color, color=colors["pen"].rich_color))
             self.image_text_lines = [line + border for line in self.image_text_lines]
 
-        self.image_width = self.image_text_lines[0].__rich_measure__(None, None).maximum  # type: ignore
+        self.image_width = cell_len(self.image_text_lines[0].plain)
         self.image_height = len(self.image_text_lines)
 
         if args.cyclic > 1:
@@ -145,7 +146,7 @@ class PipeStrip(Widget):
             self.image_text_lines = self.image_text_lines[:size.height]
 
         # These need to be re-calculated, so the widget can expand if needed
-        self.image_width = self.image_text_lines[0].__rich_measure__(None, None).maximum  # type: ignore
+        self.image_width = cell_len(self.image_text_lines[0].plain)
         self.image_height = len(self.image_text_lines)
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
